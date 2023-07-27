@@ -1,0 +1,4 @@
+V1:
+Read depth,IMU,RTC. Save to microsd. No interaction with glider.
+Bugs:
+1. Wrong RTC format. Displayed more then 24 hours.

@@ -56,7 +56,12 @@ void DebugMon_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void);
 void DMA1_Channel1_IRQHandler(void);
+void I2C1_EV_IRQHandler(void);
+void I2C1_ER_IRQHandler(void);
 void USART1_IRQHandler(void);
+void USART2_IRQHandler(void);
+void UART4_IRQHandler(void);
+void LPUART1_IRQHandler(void);
 void OCTOSPI1_IRQHandler(void);
 void SDMMC1_IRQHandler(void);
 /* USER CODE BEGIN EFP */

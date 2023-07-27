@@ -97,25 +97,31 @@ DSTATUS SD_initialize(BYTE lun)
   Stat = STA_NOINIT;
 
   /* Place for user code (may require BSP functions/defines to be added to the project) */
+
   HAL_StatusTypeDef res1;
   HAL_SD_CardCSDTypeDef CSD;
   HAL_SD_CardInfoTypeDef pCardInfo;
 
-  res1=HAL_SD_Init(&hsd1);
 
-  HAL_SD_GetCardCSD(&hsd1, &CSD);
+  print_str("Init");
+  while(HAL_SD_Init(&hsd1)!=HAL_OK){
+
+	  print_str("Error");
+	  while(1){};
+  }
+
   HAL_SD_GetCardInfo(&hsd1, &pCardInfo);
 
-  print_str("type",pCardInfo.CardType);
-  print_str("ver",pCardInfo.CardVersion);
-  print_str("class",pCardInfo.Class);
-  print_str("BlockNbr",pCardInfo.BlockNbr);
-  print_str("BlockSize",pCardInfo.BlockSize);
+  print_param("type",pCardInfo.CardType);
+  print_param("ver",pCardInfo.CardVersion);
+  print_param("class",pCardInfo.Class);
+  print_param("BlockNbr",pCardInfo.BlockNbr);
+  print_param("BlockSize",pCardInfo.BlockSize);
+  print_param("LogBlockNbr",pCardInfo.LogBlockNbr);
+  print_param("LogBlockSize",pCardInfo.LogBlockSize);
 
-  //HAL_SD_ConfigWideBusOperation(&hsd1, SDMMC_BUS_WIDE_4B);
-  //HAL_SD_ConfigSpeedBusOperation(&hsd1,SDMMC_SPEED_MODE_DEFAULT);
 
-
+  print_param("Speed",hsd1.SdCard.CardSpeed);
 
   return res1;
   /* USER CODE END SD_initialize */
@@ -156,7 +162,7 @@ DRESULT SD_read(BYTE lun, BYTE *buff, DWORD sector, UINT count)
    while (sd_dma_rx_semaphore==0)
    {
     if ((HAL_GetTick() - tickstart) >=  10000) {
-    	print_str("rerr",0);
+    	print_param("rerr",0);
     	return RES_ERROR;
     }
    }
@@ -184,19 +190,23 @@ DRESULT SD_write(BYTE lun, const BYTE *buff, DWORD sector, UINT count)
 
   uint32_t tickstart;
   sd_dma_tx_semaphore=0;
+  print_param("write_cnt",count);
+  print_param("write_sect",sector);
+
+  print_param("STAwr",hsd1.Instance->STA);
+  print_param("CLKCR",hsd1.Instance->CLKCR);
+
   if(HAL_SD_WriteBlocks_DMA(&hsd1, buff, sector, count)==HAL_OK){
    tickstart = HAL_GetTick();
    while (sd_dma_tx_semaphore==0)
    {
     if ((HAL_GetTick() - tickstart) >=  10000) {
-    	print_str("werr",0);
+    	print_str("write_err");
     	return RES_ERROR;
     }
    }
-   if(HAL_SD_GetCardState(&hsd1) == HAL_SD_CARD_TRANSFER){
-     //print_str("wok",0);
-     return RES_OK;
-   }
+   return RES_OK;
+
   }
   return RES_ERROR;
   /* USER CODE END SD_write */

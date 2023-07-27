@@ -1,0 +1,2 @@
+microsd
+1. Have to update SD_read and DS_write functions. Add more accurate check  status before read and write.
